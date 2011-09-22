@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from urllib2 import Request, urlopen
 import cookielib
 import json
@@ -37,8 +35,9 @@ def get_endpointTemplatesForSvc(svc, api="endpointTemplates/", ks_base=ks_base):
 def has_endpointTemplateForSvc(svc, api="endpointTemplates/", ks_base=ks_base):
     return len(get_endpointTemplatesForSvc(svc, api, ks_base)) != 0
 
-#def create_endpointTemplate(admin_url="", internal_url="", public_url="") 
-#def update_endpointTemplate(
+def create_endpointTemplate(admin_url="", internal_url="", public_url=""):
+
+def update_endpointTemplate(
 
 #Tenant Stuff
 
@@ -48,7 +47,13 @@ def get_tenants(api="tenants/", ks_base=ks_base):
 #Main
 
 def main():
-    # I get svc_name, 3 urls for ept, bools, + tenant name to add endpoints to
+     """ Params:
+     - svc_name
+     - public, internal and admin urls  ept, bools, 
+     - tenant name to add endpoints to
+     - keystone URL
+     - Admin auth-token (long lilved)
+"""
     ep = get_endpointTemplates()
     pprint(get_endpointTemplatesForSvc("nova"))
     pprint(has_endpointTemplateForSvc("nova"))
