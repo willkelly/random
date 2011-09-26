@@ -23,6 +23,8 @@ p - the parent object of the KeystoneClient, used to share the token
         self.url = url
         if root == None:
             self.root = self
+        else:
+            self.root = root
         if token:
             self.token = token
         self.oname = oname
