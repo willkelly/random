@@ -12,15 +12,19 @@ Example Usage:
 >>> ks.tenants.get('demo')
 {u'tenant': {u'enabled': 1, u'id': u'demo', u'description': None}}
 '''
-    def __init__(self, url, token, oname=None):
+    def __init__(self, url="http://localhost:5001/v2.0", token="999888777666", oname=None, root=None):
         '''Create a KeystoneClient:
 Arguments:
 url - the public url to a keystone resource, eg http://keystone.domain.com:5001/v2.0
 token - a valid token for keystone use
 oname - the singular name of the resource you are pointed to (usually can be omitted)
+p - the parent object of the KeystoneClient, used to share the token
 '''
         self.url = url
-        self.token = token
+        if root == None:
+            self.root = self
+        if token:
+            self.token = token
         self.oname = oname
         if not self.oname:
             #we'll guess that the object name is the url minus an 's'
@@ -32,7 +36,7 @@ oname - the singular name of the resource you are pointed to (usually can be omi
             url += "/%s" % (inst)
         req = Request(url=url)
         req.get_method = lambda: method
-        req.add_header("X-Auth-Token", self.token)
+        req.add_header("X-Auth-Token", self.root.token)
         req.add_header("Content-type","application/json")
         req.add_header("Accept","application/json")
         if isinstance(data, str):
@@ -62,5 +66,5 @@ oname - the singular name of the resource you are pointed to (usually can be omi
     def delete(self, inst=None):
         return self._req(method="DELETE", inst=inst, data=None)
     def __getattr__(self, name):
-        self.__dict__[name] = KeystoneClient("/".join([self.url, name]), self.token)
+        self.__dict__[name] = KeystoneClient("/".join([self.url, name]), root=self.root)
         return self.__dict__[name]
