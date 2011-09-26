@@ -1,11 +1,13 @@
 from urllib2 import Request, urlopen, HTTPError
 import json
 
-class Resource(object):
-    def __init__(self, url, token, oname):
+class KeystoneClient(object):
+    def __init__(self, url, token,oname=None):
         self.url = url
         self.token = token
         self.oname = oname
+        if not self.oname:
+            self.oname = url.rsplit("/")[-1][0:-1]
     def _req(self, method="GET", data=None, xheaders=[], inst=None):
         url = self.url
         if inst:
@@ -36,3 +38,7 @@ class Resource(object):
         return self._req(method="PUT", inst=inst, data=self._data(**kwargs))
     def delete(self, inst=None, **kwargs):
         return self._req(method="DELETE", inst=inst, data=None)
+    def __getattr__(self, name):
+        self.__dict__[name] = KeystoneClient("/".join([self.url, name]), self.token)
+        return self.__dict__[name]
+
