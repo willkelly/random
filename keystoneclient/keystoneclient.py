@@ -18,33 +18,25 @@ Arguments:
 url - the public url to a keystone resource, eg http://keystone.domain.com:5001/v2.0
 token - a valid token for keystone use
 oname - the singular name of the resource you are pointed to (usually can be omitted)
-p - the parent object of the KeystoneClient, used to share the token
+root - the root object (first instance) of the KeystoneClient, used to share the token
 '''
         self.url = url
-        if root == None:
-            self.root = self
-        else:
-            self.root = root
+        self.root = root or self
         if token:
             self.token = token
-        self.oname = oname
-        if not self.oname:
-            #we'll guess that the object name is the url minus an 's'
-            self.oname = url.rsplit("/")[-1][0:-1]
+        # We'll use oname if provided or guess it is resource minus 's' (tenant / tenants)
+        self.oname = oname or url.rsplit("/")[-1][0:-1]
     def _req(self, method="GET", data=None, xheaders=[], inst=None):
         # make a keystone request
         url = self.url
         if inst:
             url += "/%s" % (inst)
         req = Request(url=url)
+        req.data = data
         req.get_method = lambda: method
         req.add_header("X-Auth-Token", self.root.token)
         req.add_header("Content-type","application/json")
         req.add_header("Accept","application/json")
-        if isinstance(data, str):
-            req.data = data
-        elif data:
-            req.data = json.dumps(data)
         r = urlopen(req).read()
         if r == "":
             return { str(self.oname): None }
@@ -57,7 +49,7 @@ p - the parent object of the KeystoneClient, used to share the token
         for k in [ k for k in kwargs[self.oname].keys() if k.find("_") == 0]:
             kwargs[self.oname][k[1:]] = kwargs[self.oname][k]
             del kwargs[self.oname][k]
-        return kwargs
+        return json.dumps(kwargs)
     def get(self, inst=None, **kwargs):
         """gets data for the requested resource.  if inst is none, gets all instances"""
         return self._req(method="GET", inst=inst)
