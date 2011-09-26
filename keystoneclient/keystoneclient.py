@@ -59,6 +59,33 @@ root - the root object (first instance) of the KeystoneClient, used to share the
         return self._req(method="PUT", inst=inst, data=self._data(**kwargs))
     def delete(self, inst=None):
         return self._req(method="DELETE", inst=inst, data=None)
-    def __getattr__(self, name):
-        self.__dict__[name] = KeystoneClient("/".join([self.url, name]), root=self.root)
-        return self.__dict__[name]
+    def __getattribute__(self, name):
+        try:
+            return object.__getattribute__(self, name)
+        except AttributeError:
+            self.__dict__[name] = KeystoneClient("/".join([self.url, name]), 
+                                                 root=self.root)
+        return object.__getattribute__(self, name)
+
+def usage():
+    import sys
+    return "%s: auth_url resource token action [inst] [key=value]..." % (sys.argv[0])
+
+def main():
+    import sys
+    try:
+        args = sys.argv[1:]
+        url = args.pop(0)
+        token = args.pop(0)
+        resource = args.pop(0)
+        action = args.pop(0)
+        kwargs = dict(map(lambda x: tuple(x.split("=",2)), args))
+    except:
+        print usage()
+        sys.exit(1)
+    ks = KeystoneClient(url, token)
+    r = ks.__getattribute__(resource).__getattribute__(action)(**kwargs)
+    print r
+
+if __name__=="__main__":
+    main()
