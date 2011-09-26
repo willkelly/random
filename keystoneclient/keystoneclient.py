@@ -2,11 +2,17 @@ from urllib2 import Request, urlopen, HTTPError
 import json
 
 class KeystoneClient(object):
+    '''A very simple keystone client.
+TODO: Auth (requires long lived token at this time)
+Usage:
+'''
     def __init__(self, url, token,oname=None):
+
         self.url = url
         self.token = token
         self.oname = oname
         if not self.oname:
+            #we'll guess that the object name is the url minus an 's'
             self.oname = url.rsplit("/")[-1][0:-1]
     def _req(self, method="GET", data=None, xheaders=[], inst=None):
         url = self.url
