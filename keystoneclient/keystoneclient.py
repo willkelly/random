@@ -6,8 +6,7 @@ class KeystoneClient(object):
 TODO: Auth (requires long lived token at this time)
 Usage:
 '''
-    def __init__(self, url, token,oname=None):
-
+    def __init__(self, url, token, oname=None):
         self.url = url
         self.token = token
         self.oname = oname
@@ -17,7 +16,7 @@ Usage:
     def _req(self, method="GET", data=None, xheaders=[], inst=None):
         url = self.url
         if inst:
-            url += "/%d" % (inst)
+            url += "/%s" % (inst)
         req = Request(url=url)
         req.get_method = lambda: method
         req.add_header("X-Auth-Token", self.token)
