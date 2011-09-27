@@ -69,8 +69,29 @@ root - the root object (first instance) of the KeystoneClient, used to share the
 
 def usage():
     import sys
-    return "%s: auth_url resource token action [inst] [key=value]..." % (sys.argv[0])
+    return "%s: auth_url resource token action [key=value] [key=value]..." % (sys.argv[0])
 
+def required(*args, **kwargs):
+    def d(f):
+        def newf(*_args, **_kwargs):
+            if len(args) > 0:
+                required = args[0]
+            else:
+                required = kwargs['request']
+            if len(_args) > 0:
+                raise TypeError("Expecting keyword arguments only")
+            bad_kwargs = [ x for x in required if not x in _kwargs.keys() ]
+            if len(bad_kwargs) > 0:
+                raise TypeError("The following keyword values are missing or malformed: %s" % (bad_kwargs))
+            return f(*_args, **_kwargs)
+        return newf
+    return d
+
+@required(['adminURL', 'region', '_global', 'enabled', 
+           'serviceId', 'internalURL', 'publicURL'])
+def createEndpointTemplate(**kwargs):
+    pass
+    
 def main():
     import sys
     try:
