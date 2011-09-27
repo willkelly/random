@@ -78,8 +78,6 @@ def required(*args, **kwargs):
                 required = args[0]
             else:
                 required = kwargs['request']
-            if len(_args) > 0:
-                raise TypeError("Expecting keyword arguments only")
             bad_kwargs = [ x for x in required if not x in _kwargs.keys() ]
             if len(bad_kwargs) > 0:
                 raise TypeError("The following keyword values are missing or malformed: %s" % (bad_kwargs))
@@ -87,10 +85,31 @@ def required(*args, **kwargs):
         return newf
     return d
 
+def compare(d1, d2):
+    newd1 = dict(d1)
+    newd2 = dict(d2)
+    for d in (newd1,newd2):
+        for k in d.keys():
+            if k.find("_") == 0:
+                d[k[1:]] = d[k]
+                del d[k]
+            if k == 'id':
+                del d[k]
+    return newd1 == newd2
+
 @required(['adminURL', 'region', '_global', 'enabled', 
            'serviceId', 'internalURL', 'publicURL'])
-def createEndpointTemplate(**kwargs):
-    pass
+def createEndpointTemplate(ks, **kwargs):
+    kwargs['global'] = kwargs['_global']
+    del kwargs['_global']
+    try:
+        ks.services.get(kwargs['serviceId'])
+    except HTTPError:
+        ks.services.create(_id=kwargs['serviceId'], description=kwargs['serviceId'])
+    for et in ks.endpointTemplates.get()['endpointTemplates']['values']:
+        if compare(kwargs,et):
+            return ks.endpointTemplates.get(et['id'])
+    return ks.endpointTemplates.create(**kwargs)
     
 def main():
     import sys
@@ -103,10 +122,11 @@ def main():
         kwargs = dict(map(lambda x: tuple(x.split("=",2)), args))
     except:
         print usage()
-        sys.exit(1)
+    #    sys.exit(1)
     ks = KeystoneClient(url, token)
-    r = ks.__getattribute__(resource).__getattribute__(action)(**kwargs)
-    print r
+    #r = ks.__getattribute__(resource).__getattribute__(action)(**kwargs)
+    et = {u'adminURL': u'http://50.56.12.206:8080/', u'region': u'RegionOne', u'_global': True, u'enabled': True, u'serviceId': u'will', u'internalURL': u'http://50.56.12.206:8080/v1/AUTH_%tenant_id%', u'publicURL': u'http://50.56.12.206:8080/v1/AUTH_%tenant_id%'}
+    print createEndpointTemplate(ks, **et)
 
 if __name__=="__main__":
     main()
