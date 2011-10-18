@@ -79,18 +79,18 @@ With keystone, the pipeline may look like this:
 
 The new filters have their own configurations that look like this:
 
->[filter:tokenauth]
->paste.filter_factory = keystone.middleware.auth_token:filter_factory
->service_protocol = http
->service_host = keystonehostname.domain.com
->service_port = 5000
->auth_host = keystonehostname.domain.com
->auth_port = 5001
->auth_protocol = http
->auth_uri = http://keystonehostname.domain.com:5000/v2.0
->admin_token = 152154125712412
->
->[filter:keystonecontext]
->paste.filter_factory = keystone.middleware.nova_keystone_context:NovaKeystoneContext.factory
->[filter:totoken]
->paste.filter_factory = keystone.middleware.ec2_token:EC2Token.factory
+[filter:tokenauth]
+paste.filter_factory = keystone.middleware.auth_token:filter_factory
+service_protocol = http
+service_host = keystonehostname.domain.com
+service_port = 5000
+auth_host = keystonehostname.domain.com
+auth_port = 5001
+auth_protocol = http
+auth_uri = http://keystonehostname.domain.com:5000/v2.0
+admin_token = 152154125712412
+
+[filter:keystonecontext]
+paste.filter_factory = keystone.middleware.nova_keystone_context:NovaKeystoneContext.factory
+[filter:totoken]
+paste.filter_factory = keystone.middleware.ec2_token:EC2Token.factory
