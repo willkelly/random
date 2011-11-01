@@ -1,1 +1,84 @@
-/home/will/.conkerorrc
+define_webjump("youtube", 
+	       "http://www.youtube.com/results?search_query=%s&search=Search",
+	       $description = "YouTube videos search");
+define_webjump("youtube-user",
+	       "http://youtube.com/profile_videos?user=%s",
+	       $description = "YouTube users search");
+define_webjump("ghs", 
+	       "http://www.github.com/search?type=Everything&q=%s",
+	       $description = "GitHub search");
+define_webjump("githubsearch", 
+	       "http://www.github.com/search?type=Everything&q=%s",
+	       $description = "GitHub search");
+define_webjump("gh", 
+	       "http://www.github.com/%s", 
+	       $description="GitHub Shortcut");
+define_webjump("github",
+	       "http://www.github.com/%s",
+	       $description="GitHub Shortcut");
+define_webjump("cb",
+	       "http://www.github.com/cloudbuilders/%s", 
+	       $description="Cloudbuilders GitHub Shortcut");
+define_webjump("cloudbuilders",
+	       "http://www.github.com/cloudbuilders/%s",
+	       $description="Cloudbuilders GitHub Shortcut");
+define_webjump("wk",
+	       "http://www.github.com/willkelly/%s",
+	       $description="My GitHub Shortcut");
+define_webjump("willkelly",
+	       "http://www.github.com/willkelly/%s",
+	       $description="My GitHub Shortcut");
+define_webjump("aw",
+	       "http://wiki.archlinux.org/index.php?title=Special%3ASearch&search=%s&Fulltext=Search",
+	       $description="Arch Wiki Search");
+define_webjump("archwikisearch",
+	       "http://wiki.archlinux.org/index.php?title=Special%3ASearch&search=%s&Fulltext=Search",
+	       $description="Arch Wiki Search");
+define_webjump("amazon",
+	       "http://www.amazon.com/exec/obidos/external-search/?field-keywords=%s&mode=blended",
+	       $description="Amazon Search");
+
+define_webjump("deb",
+	       "http://packages.debian.org/search?keywords=%s&searchon=names&suite=unstable&section=all",
+	       $description="Debian Package Search");
+define_webjump("debfile", 
+	       "http://packages.debian.org/search?searchon=contents&keywords=%s&mode=path&suite=unstable&arch=any",
+	       $description="Debian Package Search (By File)");
+define_webjump("debbugs",
+	       "http://bugs.debian.org/%s",
+	       $description="Debian Bug Search");
+define_webjump("debpts", 
+	       "http://packages.qa.debian.org/%s",
+	       $description="Debian Package (Testing) Search");
+
+define_webjump("ubuntupkg",
+	       "http://packages.ubuntu.com/%s",
+	       $description="Ubuntu package search");
+define_webjump("ubuntufile",
+	       "http://packages.ubuntu.com/search?searchon=contents&keywords=%s&mode=path&arch=any",
+	       $description="Ubuntu package search (by file)");
+define_webjump("ubuntubugs", 
+	       "http://bugs.launchpad.net/ubuntu/+source/%s",
+	       $description="Ubuntu bug search");
+define_webjump("launchpad",
+	       "https://launchpad.net/+search?field.text=%s",
+	      $description="Launchpad search");
+
+define_webjump("b",
+               function(term) {return term;},
+               $completer = history_completer($use_history = false,
+                                              $use_bookmarks = true,
+                                              $match_required = true),
+               $description = "Visit a conkeror bookmark");
+
+define_webjump("h",
+               function(term) {return term;},
+               $completer = history_completer($use_history = true,
+                                              $use_bookmarks = false,
+                                              $match_required = true),
+               $description = "Visit a site from history");
+
+
+url_completion_use_history = false;
+mode_line_mode(false);
+
