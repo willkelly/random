@@ -69,7 +69,7 @@ root - the root object (first instance) of the KeystoneClient, used to share the
 
 def usage():
     import sys
-    return "%s: auth_url resource token action [key=value] [key=value]..." % (sys.argv[0])
+    return "%s: auth_url token [key=value] [key=value]..." % (sys.argv[0])
 
 def required(*args, **kwargs):
     def d(f):
@@ -117,16 +117,12 @@ def main():
         args = sys.argv[1:]
         url = args.pop(0)
         token = args.pop(0)
-        resource = args.pop(0)
-        action = args.pop(0)
         kwargs = dict(map(lambda x: tuple(x.split("=",2)), args))
     except:
         print usage()
-    #    sys.exit(1)
     ks = KeystoneClient(url, token)
-    #r = ks.__getattribute__(resource).__getattribute__(action)(**kwargs)
-    et = {u'adminURL': u'http://50.56.12.206:8080/', u'region': u'RegionOne', u'_global': True, u'enabled': True, u'serviceId': u'will', u'internalURL': u'http://50.56.12.206:8080/v1/AUTH_%tenant_id%', u'publicURL': u'http://50.56.12.206:8080/v1/AUTH_%tenant_id%'}
-    print createEndpointTemplate(ks, **et)
+#    et = {u'adminURL': u'http://50.56.12.206:8080/', u'region': u'RegionOne', u'_global': True, u'enabled': True, u'serviceId': u'will', u'internalURL': u'http://50.56.12.206:8080/v1/AUTH_%tenant_id%', u'publicURL': u'http://50.56.12.206:8080/v1/AUTH_%tenant_id%'}
+    print createEndpointTemplate(ks, **kwargs)
 
 if __name__=="__main__":
     main()
