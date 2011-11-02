@@ -15,7 +15,7 @@ class KeystoneClient(object):
         self.version = "unknown"
         if token:
             self.root.token = token
-        else:
+        elif self == self.root:
             self.authenticate()
         # We'll use oname if provided or resource minus 's' (tenant / tenants)
         self.oname = oname or admin_url.rsplit("/")[-1][0:-1]
@@ -47,9 +47,10 @@ class KeystoneClient(object):
                             "username": self.root.user,
                             "password": self.root.password}})
                 r = json.loads(urlopen(req).read())
+                print "{'auth': %s}" % req.data
                 self.root.version = "2.0a"
             except HTTPError:
-                req.data = "{'auth': %s}" % req.data
+                req.data = '{"auth": %s}' % req.data
                 r = json.loads(urlopen(req).read())
                 self.root.version = "2.0b"
             self.root.token = r['auth']['token']['id']
