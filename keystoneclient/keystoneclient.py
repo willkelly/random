@@ -44,12 +44,12 @@ class KeystoneClient(object):
         try:
             try:
                 req.data = json.dumps({"passwordCredentials": {
-                            "username": self.root.user,
+                            "useraname": self.root.user,
                             "password": self.root.password}})
                 r = json.loads(urlopen(req).read())
-                print "{'auth': %s}" % req.data
                 self.root.version = "2.0a"
             except HTTPError:
+                print "Got here"
                 req.data = '{"auth": %s}' % req.data
                 r = json.loads(urlopen(req).read())
                 self.root.version = "2.0b"
