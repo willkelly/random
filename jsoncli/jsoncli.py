@@ -89,26 +89,23 @@ def main():
                         action='append', 
                         help='/path/to/json/root',
                         dest="ops", type=OpType(delete))
-    parser.add_argument('--bail', action='store', help="Bail on errors",
-                        default=False, type=bool)
-    parser.add_argument('files', action='store', 
+    parser.add_argument('file', action='store', 
                         metavar='file',
-                        nargs='*', 
                         type=JsonFileType)
     args = parser.parse_args()
     if not args.ops:
         parser.print_help()
         sys.exit(1)
-    if not args.files:
-        args.files = [JsonFileType("/dev/stdin")]
+    if not args.file:
+        args.file = JsonFileType("/dev/stdin")
 
-    for json in args.files:
-        r = json
-        for op in args.ops:
-            f, fargs = op[0], [r]
-            fargs.extend(op[1:])
-            r = f(*fargs) 
-        print r
+    r = args.file
+    for op in args.ops:
+        f, fargs = op[0], [r]
+        fargs.extend(op[1:])
+        r = f(*fargs) 
+    else:
+        print json.dumps(r)
 
 
 
