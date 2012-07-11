@@ -3,8 +3,9 @@
 import argparse
 import json
 import sys
+from functools import partial
 from copy import copy
-
+import collections
 
 def SubstituteType(s, delim='='):
     try:
@@ -22,46 +23,32 @@ def JsonFileType(filename):
         raise TypeError("Not a json file")
 
 
-def nested_sub(key, data, replace):
-    if key == "/" or key == "":
-        return replace
+def nested_op(key, data, f=lambda x,i: x[i], ret=None):
+    if key == '/' or key == '':
+        return ret
     indexes = key.strip("/").split("/")
     r = copy(data)
     root = r
     i, indexes = indexes[0], indexes[1:]
     while(len(indexes) > 0 and indexes[0] != ""):
-        try:
-            root = root["%s" % i]
-        except (TypeError, ValueError, KeyError):
+        if isinstance(root, collections.Sequence):
             i = int(i)
-            root = root[i]
+        root = root[i]
         i, indexes = indexes[0], indexes[1:]
-    try:
-        root[i] = replace
-    except TypeError:
-        root[int(i)] = replace
+    if isinstance(root, collections.Sequence):
+        i = int(i)
+    f(root, i)
     return r
 
+def nested_sub(key, data, replace):
+    def replaces(root, i):
+        root[i] = replace
+    return nested_op(key, data, f=replaces, ret=data)
 
 def nested_del(key, data):
-    if key == "/" or key == "":
-        return None
-    indexes = key.strip("/").split("/")
-    r = copy(data)
-    root = r
-    i, indexes = indexes[0], indexes[1:]
-    while(len(indexes) > 0 and indexes[0] != ""):
-        try:
-            root = root["%s" % i]
-        except (TypeError, ValueError, KeyError):
-            i = int(i)
-            root = root[i]
-        i, indexes = indexes[0], indexes[1:]
-    try:
+    def delete(root, i):
         del root[i]
-    except TypeError:
-        del root[int(i)]
-    return r
+    return nested_op(key, data, f=delete, ret=None)
 
 
 class OpType(object):
