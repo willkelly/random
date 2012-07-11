@@ -8,6 +8,21 @@ from copy import copy
 import collections
 
 
+class OpType(object):
+    def __init__(self, op, conversion=lambda x: x):
+        self.op = op
+        self.conversion = conversion
+
+    def __call__(self, d):
+        r = [self.op]
+        nd = self.conversion(d)
+        if type(nd) == list or type(nd) == tuple:
+            r.extend(nd)
+        else:
+            r.append(nd)
+        return r
+
+
 def SubstituteType(s, delim='='):
     try:
         a, b = s.split(delim, 1)
@@ -52,21 +67,6 @@ def delete(data, key):
     def deleted(root, i):
         del root[i]
     return nested_op(key, data, f=deleted, ret=None)
-
-
-class OpType(object):
-    def __init__(self, op, conversion=lambda x: x):
-        self.op = op
-        self.conversion = conversion
-
-    def __call__(self, d):
-        r = [self.op]
-        nd = self.conversion(d)
-        if type(nd) == list or type(nd) == tuple:
-            r.extend(nd)
-        else:
-            r.append(nd)
-        return r
 
 
 def main():
