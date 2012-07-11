@@ -45,7 +45,7 @@ def nested_op(key, data, f=lambda x, i: x[i], ret=None):
     indexes = key.strip("/").split("/")
     r = copy(data)
     root = r
-    for c,i in enumerate(indexes):
+    for c, i in enumerate(indexes):
         if isinstance(root, collections.Sequence):
             i = int(i)
         if i == '' or c == len(indexes) - 1:
