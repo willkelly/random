@@ -89,7 +89,7 @@ def main():
                         default=False)
     parser.add_argument('json', action='store',
                         metavar='file',
-                        nargs='*',
+                        nargs='?',
                         help='file containing json, defaults to stdin',
                         type=JsonFileType)
     args = parser.parse_args()
