@@ -45,14 +45,12 @@ def nested_op(key, data, f=lambda x, i: x[i], ret=None):
     indexes = key.strip("/").split("/")
     r = copy(data)
     root = r
-    i, indexes = indexes[0], indexes[1:]
-    while(len(indexes) > 0 and indexes[0] != ""):
+    for c,i in enumerate(indexes):
         if isinstance(root, collections.Sequence):
             i = int(i)
+        if i == '' or c == len(indexes) - 1:
+            break
         root = root[i]
-        i, indexes = indexes[0], indexes[1:]
-    if isinstance(root, collections.Sequence):
-        i = int(i)
     f(root, i)
     return r
 
@@ -91,6 +89,7 @@ def main():
                         default=False)
     parser.add_argument('json', action='store',
                         metavar='file',
+                        nargs='*',
                         help='file containing json, defaults to stdin',
                         type=JsonFileType)
     args = parser.parse_args()
