@@ -42,16 +42,16 @@ def nested_op(key, data, f=lambda x, i: x[i], ret=None):
     return r
 
 
-def nested_sub(key, data, replace):
+def substitute(data, key, replace):
     def replaces(root, i):
         root[i] = replace
     return nested_op(key, data, f=replaces, ret=data)
 
 
-def nested_del(key, data):
-    def delete(root, i):
+def delete(data, key):
+    def deleted(root, i):
         del root[i]
-    return nested_op(key, data, f=delete, ret=None)
+    return nested_op(key, data, f=deleted, ret=None)
 
 
 class OpType(object):
@@ -67,14 +67,6 @@ class OpType(object):
         else:
             r.append(nd)
         return r
-
-
-def substitute(data, root, sub):
-    return nested_sub(root, data, sub)
-
-
-def delete(root, data):
-    return nested_del(data, root)
 
 
 def main():
