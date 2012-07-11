@@ -35,7 +35,7 @@ def JsonFileType(filename):
     try:
         with open(filename, "r") as f:
             return json.load(f)
-    except:
+    except ValueError:
         raise TypeError("Not a json file")
 
 
@@ -79,26 +79,31 @@ def main():
                         dest="ops")
     parser.add_argument('--delete', '-d',
                         action='append',
-                        help='/path/to/json/root',
+                        help='/path/to/json/root/to/delete',
                         dest="ops", type=OpType(delete))
     parser.add_argument('--bail', '-b',
                         action='store_true',
+                        help="exit with error on failed operation",
                         default=False)
     parser.add_argument('--quiet', '-q',
                         action='store_true',
+                        help="Do not print error messages on failed operation",
                         default=False)
-    parser.add_argument('file', action='store',
+    parser.add_argument('json', action='store',
                         metavar='file',
+                        help='file containing json, defaults to stdin',
                         type=JsonFileType)
     args = parser.parse_args()
 
-    if not args.file:
-        args.file = JsonFileType("/dev/stdin")
+    if not args.ops:
+        args.ops = []
+    if not args.json:
+        args.json = JsonFileType("/dev/stdin")
 
-    r = args.file
+    r = args.json
     for op in args.ops:
         try:
-            f, fargs = op[0], [r]
+            f, fargs = op[0], [args.json]
             fargs.extend(op[1:])
             r = f(*fargs)
         except (KeyError, IndexError):
